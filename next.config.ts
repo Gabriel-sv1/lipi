@@ -7,7 +7,7 @@ const isDocker = process.env.IS_DOCKER === "true";
 const isProd = process.env.NODE_ENV === "production";
 
 const config: NextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   images: {
     remotePatterns: [],
     unoptimized: !isDocker,
