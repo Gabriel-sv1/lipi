@@ -38,29 +38,19 @@ export const env = createEnv({
     ),
 
     /* -----------------------------------------------------------------------------------------------
-     * Google OAuth
+     * Google OAuth (Optional - only required if using Google authentication)
      * -----------------------------------------------------------------------------------------------*/
 
-    GOOGLE_CLIENT_ID: z
-      .string()
-      .min(1, { message: "Google Client ID is invalid or missing" }),
-    GOOGLE_CLIENT_SECRET: z
-      .string()
-      .min(1, { message: "Google Client Secret is invalid or missing" }),
+    GOOGLE_CLIENT_ID: z.string().optional(),
+    GOOGLE_CLIENT_SECRET: z.string().optional(),
 
     /* -----------------------------------------------------------------------------------------------
-     * Github OAuth
+     * Github OAuth (Optional - only required if using GitHub authentication)
      * -----------------------------------------------------------------------------------------------*/
 
-    GITHUB_CLIENT_ID: z
-      .string()
-      .min(1, { message: "Github Client ID is invalid or missing" }),
-    GITHUB_CLIENT_SECRET: z
-      .string()
-      .min(1, { message: "Github Client Secret is invalid or missing" }),
-    GITHUB_ACCESS_TOKEN: z
-      .string()
-      .min(1, { message: "Github Access Token is invalid or missing" }),
+    GITHUB_CLIENT_ID: z.string().optional(),
+    GITHUB_CLIENT_SECRET: z.string().optional(),
+    GITHUB_ACCESS_TOKEN: z.string().optional(),
 
     /* -----------------------------------------------------------------------------------------------
      * Discord OAuth
@@ -97,7 +87,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   },
 
   /**
@@ -106,7 +97,8 @@ export const env = createEnv({
    * For Next.js >= 13.4.4, you only need to destructure client variables (Only valid for `experimental__runtimeEnv`)
    */
   experimental__runtimeEnv: {
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
 
   /**

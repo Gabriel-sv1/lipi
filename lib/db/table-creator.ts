@@ -1,12 +1,7 @@
-import { pgTableCreator } from "drizzle-orm/pg-core";
-
-import { siteConfig } from "@/config/site";
+import { pgTable } from "drizzle-orm/pg-core";
 
 /**
- * Use to keep multiple projects schemas/tables in the same database.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
+ * Use standard table names without prefix to match Supabase schema.
+ * Tables are created directly in Supabase and shared with Drizzle ORM.
  */
-export const createTable = pgTableCreator(
-  (name) => `${siteConfig.name.toLowerCase().replace(/\s/g, "_")}_${name}`
-);
+export const createTable = pgTable;

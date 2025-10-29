@@ -13,10 +13,19 @@ import {
 } from "./config/routes";
 import { env } from "./lib/env";
 
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(env.RATE_LIMITING_REQUESTS_PER_SECOND, "1s"),
-});
+let ratelimit: Ratelimit | null = null;
+
+if (
+  env.ENABLE_RATE_LIMITING === "true" &&
+  env.NODE_ENV === "production" &&
+  env.UPSTASH_REDIS_REST_URL &&
+  env.UPSTASH_REDIS_REST_TOKEN
+) {
+  ratelimit = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(env.RATE_LIMITING_REQUESTS_PER_SECOND, "1s"),
+  });
+}
 
 const { auth } = NextAuth(authConfig);
 
@@ -25,7 +34,7 @@ export default auth(async (req) => {
    * Rate limiting middleware
    * -----------------------------------------------------------------------------------------------*/
 
-  if (env.ENABLE_RATE_LIMITING === "true" && env.NODE_ENV === "production") {
+  if (ratelimit && env.ENABLE_RATE_LIMITING === "true" && env.NODE_ENV === "production") {
     const id = getIP(req) || "anonymous";
     const { limit, pending, remaining, reset, success } =
       await ratelimit.limit(id);

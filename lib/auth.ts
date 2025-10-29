@@ -42,12 +42,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
 
     jwt: async ({ token }) => {
-      const user = await db.query.users.findFirst({
-        where: (u, { eq }) => eq(u.id, token.sub!),
-      });
+      if (!token.sub) {
+        return token;
+      }
 
-      if (user) {
-        token.username = user.username;
+      try {
+        const user = await db.query.users.findFirst({
+          where: (u, { eq }) => eq(u.id, token.sub!),
+        });
+
+        if (user) {
+          token.username = user.username;
+        }
+      } catch (error) {
+        console.error('Error fetching user in JWT callback:', error);
       }
 
       return token;

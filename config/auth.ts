@@ -9,41 +9,55 @@ import { db } from "@/lib/db";
 import { env } from "@/lib/env";
 import { loginSchema } from "@/lib/validations";
 
-export const authConfig: NextAuthConfig = {
-  providers: [
+const providers: NextAuthConfig['providers'] = [];
+
+if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
+    })
+  );
+}
+
+if (env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET) {
+  providers.push(
     GitHubProvider({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
-    }),
-    CredentialsProvider({
-      async authorize(credentials) {
-        const validatedFields = loginSchema.safeParse(credentials);
+    })
+  );
+}
 
-        if (validatedFields.success) {
-          const user = validatedFields.data;
+providers.push(
+  CredentialsProvider({
+    async authorize(credentials) {
+      const validatedFields = loginSchema.safeParse(credentials);
 
-          const dbUser = await db.query.users.findFirst({
-            where: (u, { eq }) =>
-              user.type === "email" ?
-                eq(u.email, user.email!)
-              : eq(u.username, user.username!),
-          });
+      if (validatedFields.success) {
+        const user = validatedFields.data;
 
-          if (dbUser && dbUser.password) {
-            const isValid = await compare(user.password, dbUser.password);
+        const dbUser = await db.query.users.findFirst({
+          where: (u, { eq }) =>
+            user.type === "email" ?
+              eq(u.email, user.email!)
+            : eq(u.username, user.username!),
+        });
 
-            if (isValid) {
-              return dbUser;
-            }
+        if (dbUser && dbUser.password) {
+          const isValid = await compare(user.password, dbUser.password);
+
+          if (isValid) {
+            return dbUser;
           }
         }
+      }
 
-        return null;
-      },
-    }),
-  ],
+      return null;
+    },
+  })
+);
+
+export const authConfig: NextAuthConfig = {
+  providers,
 };
