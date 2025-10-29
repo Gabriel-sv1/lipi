@@ -64,26 +64,24 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <React.StrictMode>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={cn(
-            fontSans.variable,
-            fontMono.variable,
-            fontHeading.variable,
-            fontHandwriting.variable,
-            "min-h-screen scroll-smooth font-sans antialiased selection:bg-foreground selection:text-background"
-          )}
-        >
-          <Providers>
-            {children}
-            <Toaster />
-          </Providers>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          fontSans.variable,
+          fontMono.variable,
+          fontHeading.variable,
+          fontHandwriting.variable,
+          "min-h-screen scroll-smooth font-sans antialiased selection:bg-foreground selection:text-background"
+        )}
+      >
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
 
-          <Analytics />
-          <TailwindIndicator />
-        </body>
-      </html>
-    </React.StrictMode>
+        <Analytics />
+        <TailwindIndicator />
+      </body>
+    </html>
   );
 }
