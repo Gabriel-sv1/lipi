@@ -5,7 +5,7 @@ import NextAuth from "next-auth";
 
 import type { NextRequest } from "next/server";
 
-import { authConfig } from "./config/auth";
+import { authConfig } from "./config/auth.edge";
 import {
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
