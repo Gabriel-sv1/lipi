@@ -13,9 +13,7 @@ const config: NextConfig = {
     unoptimized: !isDocker,
   },
   experimental: {
-    ppr: true,
     reactCompiler: isProd,
-    // ...
   },
 
   output: isDocker ? "standalone" : undefined /* ... */,

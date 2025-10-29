@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createWorkspace } from "@/lib/db/queries";
+import { createWorkspace } from "@/lib/supabase/queries";
 
 const workspaceSchema = z.object({
   name: z.string().min(3, "Workspace name must be at least 3 characters long"),

@@ -79,3 +79,51 @@
       "calt" 1;
   }
 }
+
+.ProseMirror {
+  @apply focus:outline-none;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: hsl(var(--muted-foreground));
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.ProseMirror h1 {
+  @apply text-4xl font-bold mb-4 mt-6;
+}
+
+.ProseMirror h2 {
+  @apply text-3xl font-bold mb-3 mt-5;
+}
+
+.ProseMirror h3 {
+  @apply text-2xl font-bold mb-2 mt-4;
+}
+
+.ProseMirror ul {
+  @apply list-disc pl-6 mb-4;
+}
+
+.ProseMirror ol {
+  @apply list-decimal pl-6 mb-4;
+}
+
+.ProseMirror blockquote {
+  @apply border-l-4 border-muted pl-4 italic my-4;
+}
+
+.ProseMirror code {
+  @apply bg-muted rounded px-1.5 py-0.5 font-mono text-sm;
+}
+
+.ProseMirror pre {
+  @apply bg-muted rounded-lg p-4 overflow-x-auto my-4;
+}
+
+.ProseMirror pre code {
+  @apply bg-transparent p-0;
+}
