@@ -59,6 +59,91 @@ make stop
 
 <div align=center>
 
+## WebContainers/Bolt Workarounds
+
+</div>
+
+This project has been optimized to work in WebContainer environments (like Bolt). The following changes were made to resolve the `workUnitAsyncStorage` error that occurs with Next.js 15.5.x in WebContainers:
+
+### Changes Applied
+
+1. **Next.js Version Pinned to 15.0.3**: Downgraded from 15.5.6 (canary) to 15.0.3 stable to avoid async storage issues in WebContainers.
+
+2. **Removed Server-Side Cookie Access in Layouts**: Moved resizable panel layout preferences from server-side `cookies()` API to client-side cookie reading to avoid request context issues.
+   - Created `useLayoutPreferences()` hook for client-side cookie access
+   - Added `ResizableLayoutWrapper` component to handle layout state on the client
+
+3. **Database Client Consolidation**: Replaced Supabase client calls in server components with Drizzle ORM queries to ensure consistent database access patterns.
+   - Dashboard page now uses `getRecentWorkspace()` from Drizzle queries
+   - All server-side database operations use Drizzle ORM with proper caching
+
+4. **Health Check Endpoint**: Added `/api/health/request-scope` route to validate request context APIs are working correctly.
+
+5. **Diagnostics Tools**: Added `diagnostics/collect-context.sh` script to automatically detect environment and list request-scope API usage.
+
+### Running Diagnostics
+
+**Quick Verification (Recommended):**
+
+```bash
+bash diagnostics/verify-dynamic-apis.sh
+```
+
+This performs a quick health check:
+- Verifies Node.js and Next.js versions
+- Checks if Turbopack is enabled
+- Detects problematic imports in middleware
+- Finds top-level API calls
+- Validates Server Actions configuration
+- Checks for "use cache" conflicts
+- Verifies runtime configuration
+
+**Detailed Report:**
+
+```bash
+bash diagnostics/collect-context.sh
+```
+
+This generates a comprehensive report at `diagnostics/next-context.md` with:
+- Node.js and package versions
+- WebContainer detection
+- Files using request-scope APIs (cookies, headers, redirect, etc.)
+- Middleware and route handlers inventory
+- Server actions with "use server" directive
+
+### Health Check
+
+**Simple Health Check (Browser):**
+
+Visit http://localhost:3000/_health
+
+Expected: Page showing "✅ OK" with timestamp
+
+**API Health Check (Request-Scope Validation):**
+
+```bash
+curl http://localhost:3000/api/health/request-scope
+```
+
+Expected response includes environment information and confirmation that cookies/headers are accessible.
+
+### Known Limitations
+
+- Next.js 15.5.x canary builds may have async storage issues in WebContainer environments
+- Server-side cookie access in layouts can cause workUnitAsyncStorage errors
+- Edge runtime in middleware works correctly with NextAuth but avoid using Node-specific APIs
+
+### Rollback Instructions
+
+If you need to revert these changes:
+
+1. Restore Next.js version to latest: `"next": "^15.0.4-canary.33"`
+2. Restore server-side cookies in workspace layout (see git history)
+3. Run `npm install` to update dependencies
+4. Clear `.next` cache: `npm run clean`
+
+<div align=center>
+
 ### Deploy Your Own
 
 You can deploy your own hosted version of `lipi`. Just click the link below to deploy a ready-to-go version to Vercel.

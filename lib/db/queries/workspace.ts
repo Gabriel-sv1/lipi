@@ -1,7 +1,7 @@
 "use server";
 
 import { unstable_cache as cache, revalidateTag } from "next/cache";
-import { and, eq, notExists } from "drizzle-orm";
+import { and, desc, eq, notExists } from "drizzle-orm";
 
 import type { Workspace } from "@/types/db";
 
@@ -106,4 +106,34 @@ export const getSharedWorkspaces = cache(
   },
   ["get_shared_workspaces"],
   { tags: ["get_shared_workspaces"] }
+);
+
+/**
+ * Get the most recent workspace for a user
+ * @param userId User ID
+ * @returns Most recent workspace
+ */
+export const getRecentWorkspace = cache(
+  async (userId: string) => {
+    try {
+      const data = await db
+        .select()
+        .from(workspaces)
+        .where(
+          and(
+            eq(workspaces.workspaceOwnerId, userId),
+            eq(workspaces.inTrash, false)
+          )
+        )
+        .orderBy(desc(workspaces.createdAt))
+        .limit(1);
+
+      return data[0] ?? null;
+    } catch (e) {
+      console.error((e as Error).message);
+      throw new Error("Failed to fetch recent workspace!");
+    }
+  },
+  ["get_recent_workspace"],
+  { tags: ["get_recent_workspace"] }
 );
