@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, Folder, Plus } from 'lucide-react';
+import { useRealtimeSidebar } from '@/hooks/use-realtime-sidebar';
+import { getWorkspaceFolders, getWorkspaceFiles } from '@/lib/supabase/queries';
 import {
   Dialog,
   DialogContent,
@@ -46,6 +48,24 @@ export function WorkspaceContent({
   const [showFolderDialog, setShowFolderDialog] = useState(false);
   const [newFileName, setNewFileName] = useState('');
   const [newFolderName, setNewFolderName] = useState('');
+
+  const { foldersChanged, filesChanged } = useRealtimeSidebar(workspace.id);
+
+  useEffect(() => {
+    const refreshFolders = async () => {
+      const updatedFolders = await getWorkspaceFolders(workspace.id);
+      setFolders(updatedFolders);
+    };
+    refreshFolders();
+  }, [foldersChanged, workspace.id]);
+
+  useEffect(() => {
+    const refreshFiles = async () => {
+      const updatedFiles = await getWorkspaceFiles(workspace.id);
+      setFiles(updatedFiles);
+    };
+    refreshFiles();
+  }, [filesChanged, workspace.id]);
 
   const handleCreateFile = async () => {
     if (!newFileName.trim()) return;

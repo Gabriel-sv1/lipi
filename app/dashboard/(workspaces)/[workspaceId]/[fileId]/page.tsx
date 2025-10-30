@@ -29,7 +29,7 @@ export default async function FilePage({ params }: FilePageProps) {
       );
     }
 
-    return <FileEditor file={file} />;
+    return <FileEditor file={{ ...file, workspace_id: file.workspace_id || '' }} />;
   } catch (err) {
     console.error('Error loading file:', err);
     return (
