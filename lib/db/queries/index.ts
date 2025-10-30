@@ -10,6 +10,7 @@ export {
   createWorkspace,
   getCollaboratingWorkspaces,
   getPrivateWorkspaces,
+  getRecentWorkspace,
   getSharedWorkspaces,
 } from "./workspace";
 export {

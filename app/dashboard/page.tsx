@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
-import { supabase } from '@/lib/supabase/client';
+import { getRecentWorkspace } from '@/lib/db/queries';
 
 export const metadata = {
   title: 'Dashboard',
@@ -14,14 +14,7 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  const { data: workspace } = await supabase
-    .from('workspaces')
-    .select('*')
-    .eq('workspace_owner_id', user.id)
-    .eq('in_trash', false)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const workspace = await getRecentWorkspace(user.id);
 
   if (!workspace) {
     redirect('/dashboard/new-workspace');
